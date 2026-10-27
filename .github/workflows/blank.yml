@@ -26,6 +26,9 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Installer le SDK Android
+        uses: android-actions/setup-android@v3
+
       - name: Verifier et extraire Wells Pad
         run: |
           test -f Wells_Pad_Installable.zip
@@ -43,13 +46,17 @@ jobs:
           npx cap add android
           npx cap sync android
 
-      - name: Construire APK Android
+      - name: Installer les composants Android
+        run: |
+          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Construire l'APK
         working-directory: app/android
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Publier le fichier APK
+      - name: Publier l'APK
         uses: actions/upload-artifact@v4
         with:
           name: Wells-Pad-APK
